@@ -1,0 +1,15 @@
+===== FINAL TEST RESULTS =====
+Test Accuracy: 0.8850
+Confusion Matrix:
+[[93  7]
+ [16 84]]
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.85      0.93      0.89       100
+           1       0.92      0.84      0.88       100
+
+    accuracy                           0.89       200
+   macro avg       0.89      0.89      0.88       200
+weighted avg       0.89      0.89      0.88       200
+
