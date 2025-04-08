@@ -250,6 +250,48 @@ def plot_training_history(history):
     
     print("Training history plot saved as 'training_history.png'")
 
+def plot_hyperparameter_comparison(results):
+    """Plot comparison of different hyperparameter configurations"""
+    plt.style.use('seaborn-v0_8-darkgrid')
+    
+    # Create figure
+    fig, axes = plt.subplots(2, 1, figsize=(12, 12))
+    
+    # Prepare data for plotting
+    configs = list(results.keys())
+    final_val_accs = [results[config]['final_val_acc'] for config in configs]
+    
+    # Sort by validation accuracy
+    sorted_indices = np.argsort(final_val_accs)[::-1]  # Descending order
+    sorted_configs = [configs[i] for i in sorted_indices]
+    sorted_accs = [final_val_accs[i] for i in sorted_indices]
+    
+    # Barplot of final validation accuracies
+    axes[0].bar(range(len(sorted_configs)), sorted_accs, color='skyblue')
+    axes[0].set_xticks(range(len(sorted_configs)))
+    axes[0].set_xticklabels(sorted_configs, rotation=45, ha='right')
+    axes[0].set_title('Final Validation Accuracy by Model Configuration', fontsize=14)
+    axes[0].set_ylabel('Validation Accuracy', fontsize=12)
+    axes[0].grid(axis='y')
+    
+    # Line plot of validation accuracy over epochs
+    for config in configs:
+        num_conv, pooling = config.split('-')
+        label = f"{num_conv} conv, {pooling} pooling"
+        axes[1].plot(results[config]['val_accs'], label=label)
+    
+    axes[1].set_title('Validation Accuracy Over Epochs', fontsize=14)
+    axes[1].set_xlabel('Epoch', fontsize=12)
+    axes[1].set_ylabel('Validation Accuracy', fontsize=12)
+    axes[1].legend()
+    axes[1].grid(True)
+    
+    plt.tight_layout()
+    plt.savefig('hyperparameter_comparison.png')
+    plt.close()
+    
+    print("Hyperparameter comparison plot saved as 'hyperparameter_comparison.png'")
+
 def main():
     # Set paths for training and test data
     train_dir = "C:/Users/HARSHIT/Desktop/ai/train"
