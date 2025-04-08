@@ -184,6 +184,40 @@ def train_model(model, train_loader, val_loader, device, num_epochs=30, lr=0.001
         'final_val_acc': val_accs[-1]
     }
 
+def evaluate_model(model, data_loader, device):
+    """Evaluate model on a dataset and return predictions and metrics"""
+    model.eval()
+    
+    all_preds = []
+    all_labels = []
+    
+    with torch.no_grad():
+        for inputs, labels in data_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+    
+    # Calculate metrics
+    accuracy = accuracy_score(all_labels, all_preds)
+    cm = confusion_matrix(all_labels, all_preds)
+    report = classification_report(all_labels, all_preds)
+    
+    print(f"Accuracy: {accuracy:.4f}")
+    print(f"Confusion Matrix:\n{cm}")
+    print(f"Classification Report:\n{report}")
+    
+    return {
+        'preds': all_preds,
+        'labels': all_labels,
+        'accuracy': accuracy,
+        'confusion_matrix': cm,
+        'report': report
+    }
+
 def main():
     # Set paths for training and test data
     train_dir = "C:/Users/HARSHIT/Desktop/ai/train"
