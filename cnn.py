@@ -218,6 +218,38 @@ def evaluate_model(model, data_loader, device):
         'report': report
     }
 
+def plot_training_history(history):
+    """Plot training and validation loss/accuracy curves"""
+    plt.style.use('seaborn-v0_8-darkgrid')
+    
+    plt.figure(figsize=(12, 5))
+    
+    # Plot training & validation loss
+    plt.subplot(1, 2, 1)
+    plt.plot(history['train_losses'], label='Train Loss')
+    plt.plot(history['val_losses'], label='Validation Loss')
+    plt.title('Loss Over Epochs', fontsize=14)
+    plt.xlabel('Epoch', fontsize=12)
+    plt.ylabel('Loss', fontsize=12)
+    plt.legend()
+    plt.grid(True)
+    
+    # Plot training & validation accuracy
+    plt.subplot(1, 2, 2)
+    plt.plot(history['train_accs'], label='Train Accuracy')
+    plt.plot(history['val_accs'], label='Validation Accuracy')
+    plt.title('Accuracy Over Epochs', fontsize=14)
+    plt.xlabel('Epoch', fontsize=12)
+    plt.ylabel('Accuracy', fontsize=12)
+    plt.legend()
+    plt.grid(True)
+    
+    plt.tight_layout()
+    plt.savefig('training_history.png')
+    plt.close()
+    
+    print("Training history plot saved as 'training_history.png'")
+
 def main():
     # Set paths for training and test data
     train_dir = "C:/Users/HARSHIT/Desktop/ai/train"
