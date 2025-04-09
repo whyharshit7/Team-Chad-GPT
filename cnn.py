@@ -291,6 +291,47 @@ def plot_hyperparameter_comparison(results):
     plt.close()
     
     print("Hyperparameter comparison plot saved as 'hyperparameter_comparison.png'")
+    
+def visualize_model_predictions(model, data_loader, device, num_images=8):
+    """Visualize model predictions on sample images"""
+    model.eval()
+    
+    # Get a batch of images
+    dataiter = iter(data_loader)
+    images, labels = next(dataiter)
+    
+    # Get predictions
+    with torch.no_grad():
+        images_device = images[:num_images].to(device)
+        outputs = model(images_device)
+        _, preds = torch.max(outputs, 1)
+    
+    # Convert images for display
+    def denormalize(tensor):
+        mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
+        std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+        return tensor * std + mean
+    
+    # Plot the images with predictions
+    plt.figure(figsize=(15, 8))
+    for i in range(num_images):
+        plt.subplot(2, num_images//2, i+1)
+        img = denormalize(images[i]).cpu().numpy().transpose(1, 2, 0)
+        img = np.clip(img, 0, 1)
+        
+        true_label = 'Indoor' if labels[i] == 0 else 'Outdoor'
+        pred_label = 'Indoor' if preds[i] == 0 else 'Outdoor'
+        color = 'green' if preds[i] == labels[i] else 'red'
+        
+        plt.imshow(img)
+        plt.title(f"True: {true_label}\nPred: {pred_label}", color=color)
+        plt.axis('off')
+    
+    plt.tight_layout()
+    plt.savefig('prediction_visualization.png')
+    plt.close()
+    
+    print("Prediction visualization saved as 'prediction_visualization.png'")
 
 def main():
     # Set paths for training and test data
