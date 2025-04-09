@@ -332,6 +332,19 @@ def visualize_model_predictions(model, data_loader, device, num_images=8):
     plt.close()
     
     print("Prediction visualization saved as 'prediction_visualization.png'")
+    
+def save_model(model, model_name):
+    """Save the trained model"""
+    os.makedirs('saved_models', exist_ok=True)
+    model_path = f'saved_models/{model_name}.pth'
+    torch.save(model.state_dict(), model_path)
+    print(f"Model saved to {model_path}")
+    
+    # Save model architecture info
+    model_info_path = f'saved_models/{model_name}_info.txt'
+    with open(model_info_path, 'w') as f:
+        f.write(str(model))
+    print(f"Model architecture info saved to {model_info_path}")
 
 def main():
     # Set paths for training and test data
