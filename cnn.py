@@ -345,6 +345,47 @@ def save_model(model, model_name):
     with open(model_info_path, 'w') as f:
         f.write(str(model))
     print(f"Model architecture info saved to {model_info_path}")
+    
+def run_hyperparameter_tuning(train_loader, val_loader, device):
+    """Run hyperparameter tuning experiments"""
+    # Define hyperparameter grid
+    num_conv_layers_options = [3, 4, 5]
+    pooling_type_options = ["max", "avg"]
+    
+    # Store results
+    results = {}
+    best_val_acc = 0
+    best_model = None
+    best_config = None
+    
+    # Run experiments for each combination
+    for num_conv_layers, pooling_type in itertools.product(num_conv_layers_options, pooling_type_options):
+        config_name = f"{num_conv_layers}-{pooling_type}"
+        print(f"\n{'='*50}")
+        print(f"Training model with {num_conv_layers} conv layers and {pooling_type} pooling")
+        print(f"{'='*50}")
+        
+        # Create and train model with current hyperparameters
+        model = MuseumCNN(num_conv_layers=num_conv_layers, pooling_type=pooling_type).to(device)
+        history = train_model(
+            model=model,
+            train_loader=train_loader,
+            val_loader=val_loader,
+            device=device,
+            num_epochs=10,  # Reduced for tuning, increase for final model
+            lr=0.001
+        )
+        
+        # Store results
+        results[config_name] = history
+        
+        # Check if this is the best model so far
+        if history['final_val_acc'] > best_val_acc:
+            best_val_acc = history['final_val_acc']
+            best_model = model
+            best_config = config_name
+    
+    return results, best_model, best_config
 
 def main():
     # Set paths for training and test data
