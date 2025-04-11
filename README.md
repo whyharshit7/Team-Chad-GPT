@@ -1,140 +1,142 @@
-# Team-Chad-GPT
-# Museum Image Classification
+# Museum Indoor/Outdoor Image Classification
 
-A machine learning project that classifies museum images as indoor or outdoor using computer vision and ensemble methods.
+A deep learning project to classify museum images as indoor or outdoor using PyTorch and Convolutional Neural Networks (CNNs).
 
-## Overview
+## Project Overview
 
-This project uses advanced image processing techniques and multiple machine learning models to classify museum images. The system extracts various image features including color histograms, texture features, and edge information to distinguish between indoor and outdoor museum environments.
+This project implements a custom CNN architecture to classify museum images into two categories:
+- Indoor museum scenes
+- Outdoor museum scenes
+
+The repository includes code for training, hyperparameter tuning, evaluation, and inference on new images.
 
 ## Features
 
-- **Enhanced Feature Extraction**: Extracts color histograms, texture descriptors, edge features, and other visual characteristics
-- **Multiple Classification Models**:
-  - Random Forest Classifier
-  - Gradient Boosting Classifier
-  - Decision Tree Classifier
-  - Semi-supervised Decision Tree Classifier
-- **Performance Analysis**: Comprehensive evaluation with accuracy metrics, confusion matrices, ROC curves, and precision-recall analysis
-- **Hyperparameter Tuning**: Includes optimization for both Random Forest and Gradient Boosting models
-- **Visualization**: Generates plots for model comparison, feature importance, and hyperparameter performance
-- **Parallel Processing**: Uses multi-threading for efficient image processing
-- **Batch Prediction**: Supports both single image and batch prediction modes
+- Custom CNN architecture with configurable hyperparameters
+- Hyperparameter tuning for optimal model configuration
+- Data augmentation for improved model generalization
+- Comprehensive visualization of training progress and results
+- Model evaluation with detailed metrics
+- Easy inference on new test images
 
 ## Requirements
 
 - Python 3.6+
-- OpenCV
-- NumPy
-- Matplotlib
-- Seaborn
+- PyTorch
+- torchvision
+- matplotlib
+- numpy
 - scikit-learn
-- joblib
+- OpenCV
+- PIL (Pillow)
 
-## Installation
+You can install the required packages using:
+```
+pip install torch torchvision matplotlib numpy scikit-learn opencv-python pillow
+```
 
-```bash
-git clone https://github.com/whyharshit7/Team-Chad-GPT.git
-cd Team-Chad-GPT
-pip install -r requirements.txt
+## Project Structure
+
+```
+museum-classification/
+├── cnn.py              # Contains the CNN model implementation
+├── test_script.py      # Script for testing/evaluating the model
+├── README.md           # Project documentation
+├── saved_models/       # Directory for saved model checkpoints
+└── data/
+    ├── train/          # Training data directory
+    │   ├── museum-indoor/
+    │   └── museum-outdoor/
+    └── test/           # Test data directory
+        ├── museum-indoor/
+        └── museum-outdoor/
+```
+
+## Dataset Preparation
+
+The project expects the dataset to be organized in the following structure:
+
+```
+data/
+├── train/
+│   ├── museum-indoor/
+│   │   ├── image1.jpg
+│   │   ├── image2.jpg
+│   │   └── ...
+│   └── museum-outdoor/
+│       ├── image1.jpg
+│       ├── image2.jpg
+│       └── ...
+└── test/
+    ├── museum-indoor/
+    │   ├── image1.jpg
+    │   ├── image2.jpg
+    │   └── ...
+    └── museum-outdoor/
+        ├── image1.jpg
+        ├── image2.jpg
+        └── ...
 ```
 
 ## Usage
 
-### Training
+### Training the Model
 
-1. Organize your dataset in the following structure:
-   ```
-   data/
-     ├── train/
-     │     ├── museum-indoor/
-     │     │     ├── image1.jpg
-     │     │     ├── image2.jpg
-     │     │     └── ...
-     │     └── museum-outdoor/
-     │           ├── image1.jpg
-     │           ├── image2.jpg
-     │           └── ...
-     └── test/
-           ├── museum-indoor/
-           │     ├── image1.jpg
-           │     ├── image2.jpg
-           │     └── ...
-           └── museum-outdoor/
-                 ├── image1.jpg
-                 ├── image2.jpg
-                 └── ...
-   ```
-
-2. Update the data directory paths in `alt.py`:
-   ```python
-   train_dir = "path/to/your/train/directory"
-   test_dir = "path/to/your/test/directory"
-   ```
-
-3. Run the training script:
-   ```bash
-   python alt.py
-   ```
-
-### Testing
-
-Use the `test_script.py` to make predictions on new images:
+To train the model with hyperparameter tuning:
 
 ```bash
-python test_script.py
+python cnn.py
 ```
 
-The script offers two options:
-1. Single image prediction
-2. Batch prediction (entire directory or list of images)
+This will:
+1. Load the training data
+2. Split into training and validation sets
+3. Run hyperparameter tuning to find the best configuration
+4. Train the final model with the optimal parameters
+5. Save visualizations and the trained model
 
-## Model Performance
+### Testing the Model
 
-The system evaluates and compares multiple models:
-- Model accuracy comparison
-- Confusion matrices
-- ROC curves
-- Feature importance analysis
-- Hyperparameter performance
+To evaluate a trained model on the test set:
 
-Output visualizations include:
-- `model_accuracy_comparison.png`
-- `confusion_matrices.png`
-- `roc_curves.png`
-- `rf_feature_importance.png`
-- `gb_feature_importance.png`
-- `rf_hyperparameter_heatmap.png`
-- `gb_hyperparameter_heatmap.png`
-- `gb_learning_curve.png`
+```bash
+python test_script.py --model saved_models/custom_cnn_4-max.pth --test data/test --results evaluation_results.txt
+```
 
-## Sample Output
+Arguments:
+- `--model`: Path to the trained model file (default: 'model/museum_cnn.pth')
+- `--test`: Path to test directory (default: 'test')
+- `--batch`: Batch size for evaluation (default: 32)
+- `--results`: Path to save evaluation results (default: 'results.txt')
 
-When using the test script for batch prediction, it generates:
-- Console output with prediction details
-- `batch_results.png` with visualization of all predictions
-- `prediction_results.csv` with tabulated results
+## Model Architecture
 
-## How It Works
+The CNN architecture is defined in the `MuseumCNN` class with configurable hyperparameters:
+- Number of convolutional layers (3-5)
+- Pooling type (max, avg, or none)
 
-1. **Feature Extraction**: The system extracts multiple types of features from each image:
-   - HSV color histograms with 32 bins
-   - Texture descriptors
-   - Edge detection features
-   - Basic pixel statistics
+The model uses:
+- Convolutional layers with batch normalization and ReLU activation
+- Pooling layers (configurable)
+- Dropout for regularization
+- Fully connected layers for classification
 
-2. **Model Training**: The extracted features are used to train multiple classification models in parallel.
+## Results
 
-3. **Evaluation**: The models are evaluated using various metrics including accuracy, precision, recall, and F1-score.
+The training process generates several visualizations:
+- Training and validation loss/accuracy curves
+- Hyperparameter comparison plots
+- Model prediction visualization on sample images
 
-4. **Hyperparameter Tuning**: The system compares different hyperparameter configurations for both Random Forest and Gradient Boosting models.
+Evaluation results include:
+- Overall accuracy
+- Per-class accuracy
+- Detailed results for each test image
 
-5. **Feature Importance**: The system analyzes and visualizes which features contribute most to the classification decision.
+## Customization
 
-## Future Improvements
-
-- Implement deep learning models (CNN) for comparison
-- Add more feature extraction methods
-- Include more hyperparameter tuning options
-- Implement cross-validation
-- Add a web interface for easy usage
+You can modify the model architecture and training parameters:
+- Change the number of convolutional layers
+- Adjust the pooling strategy
+- Modify learning rate, batch size, or number of epochs
+- Update data augmentation techniques
